@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: url('https://i.pinimg.com/originals/e1/cd/03/e1cd037aff34ae3aca86e0c6b68b0a2d.gif') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            text-shadow: 2px 2px 5px black;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ffcc00;
+            transform: scale(1.1);
+        }
+
+        nav ul li a.active {
+            border-bottom: 2px solid #ffcc00;
+        }
+
+        .help-button {
+            width: 150px;
+            height: 150px;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: bounce 1.5s infinite;
+        }
+
+        .help-button:hover {
+            transform: scale(1.2);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 80px;
+        }
+
+        .safety-measures {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .safety-measures h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .warning-message {
+            color: #e9732f;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            animation: fade 1.5s infinite;
+        }
+
+        @keyframes fade {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .help-button {
+                width: 120px;
+                height: 120px;
+                font-size: 1.5rem;
+            }
+
+            nav ul li a {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="/chat1">Chat</a></li>
+            <li><a href="/safety_Measures">Safety Tips</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container text-center">
+        <h1 class="mb-4">Welcome {{ name }}</h1>
+        <div class="help-button" onclick="sendHelp()">Help</div>
+
+        <div class="safety-measures mt-4">
+            <h2>Safety Measures</h2>
+            <p>1. Always stay aware of your surroundings.</p>
+            <p>2. Share your real-time location with a trusted contact.</p>
+            <p>3. Use the Help button to alert nearby users in case of emergency.</p>
+        </div>
+
+        <div class="warning-message">Warning: Misuse of the system is strictly prohibited!</div>
+        <div class="warning-message">Immediate action will be taken for false alerts!</div>
+    </div>
+
+    <script>
+        function sendHelp() {
+            if (confirm("Are you sure you want to send a help alert?")) {
+                fetch('/help', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => alert(data.status));
+            }
+        }
+
+        setInterval(() => {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const data = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    };
+                    fetch('/update_location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                },
+                error => {
+                    console.error('Error getting location:', error);
+                    alert('Unable to retrieve your location.');
+                }
+            );
+        }, 30000);
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
