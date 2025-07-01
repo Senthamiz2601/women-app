@@ -5,14 +5,11 @@ from flask_mail import Mail, Message
 import sqlite3
 from geopy.distance import geodesic
 import time
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-model = GPT2LMHeadModel.from_pretrained("gpt2")
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
